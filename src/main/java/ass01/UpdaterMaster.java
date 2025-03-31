@@ -10,15 +10,15 @@ public class UpdaterMaster {
     private final int availableProcessors = Runtime.getRuntime().availableProcessors();
 
     private final List<Worker> workers = new ArrayList<>();
-    private final CyclicBarrier startBarrier;
-    private final CyclicBarrier endBarrier;
+    private final MyCyclicBarrier startBarrier;
+    private final MyCyclicBarrier endBarrier;
 
     public UpdaterMaster() {
 
-        this.startBarrier = new CyclicBarrier(availableProcessors + 1);
-        this.endBarrier = new CyclicBarrier(availableProcessors + 1);
+        this.startBarrier = new MyCyclicBarrier(availableProcessors + 1);
+        this.endBarrier = new MyCyclicBarrier(availableProcessors + 1);
 
-        var readToWriteBarrier = new CyclicBarrier(availableProcessors);
+        var readToWriteBarrier = new MyCyclicBarrier(availableProcessors);
 
         for (int index = 0; index < availableProcessors; index++) {
             Worker worker = new Worker(index, this.startBarrier, this.endBarrier, readToWriteBarrier);

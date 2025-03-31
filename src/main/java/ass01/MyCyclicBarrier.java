@@ -1,5 +1,7 @@
 package ass01;
 
+import java.util.concurrent.BrokenBarrierException;
+
 public class MyCyclicBarrier {
     private final int parties;
     private int currentParties = 0;
@@ -16,7 +18,7 @@ public class MyCyclicBarrier {
         this.name = name;
     }
 
-    public synchronized void await() throws InterruptedException {
+    public synchronized void await() throws InterruptedException, BrokenBarrierException {
         this.isBroken = false;
         this.currentParties++;
 

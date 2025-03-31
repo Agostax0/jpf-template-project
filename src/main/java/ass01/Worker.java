@@ -12,12 +12,12 @@ public class Worker extends Thread {
     private BoidsModel model;
     private final int availableProcessors = 4;
     private List<Boid> myBoids = new ArrayList<>();
-    private final CyclicBarrier startBarrier;
-    private final CyclicBarrier endBarrier;
+    private final MyCyclicBarrier startBarrier;
+    private final MyCyclicBarrier endBarrier;
 
-    private final CyclicBarrier readToWriteBarrier;
+    private final MyCyclicBarrier readToWriteBarrier;
 
-    public Worker(final int index, final CyclicBarrier startBarrier, final CyclicBarrier endBarrier, final CyclicBarrier readToWriteBarrier) {
+    public Worker(final int index, final MyCyclicBarrier startBarrier, final MyCyclicBarrier endBarrier, final MyCyclicBarrier readToWriteBarrier) {
         this.index = index;
         this.startBarrier = startBarrier;
         this.endBarrier = endBarrier;
