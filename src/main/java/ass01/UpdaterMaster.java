@@ -30,15 +30,22 @@ public class UpdaterMaster {
     public void update(BoidsModel model) {
         this.workers.forEach(it -> it.setModel(model));
         try {
+            log("via libera ai worker");
             this.startBarrier.await(); //quando il main esegue questo await gli altri thread partono
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
 
         try {
+            log("aspetto i worker");
             this.endBarrier.await(); //quando gli altri thread finiscono libero il main
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
+        log("i worker han finito");
+    }
+
+    private synchronized void log(String msg){
+        System.out.println("[Thread: main] " + msg);
     }
 }

@@ -10,7 +10,7 @@ public class Worker extends Thread {
     private final int index;
 
     private BoidsModel model;
-    private final int availableProcessors = Runtime.getRuntime().availableProcessors();
+    private final int availableProcessors = 4;
     private List<Boid> myBoids = new ArrayList<>();
     private final CyclicBarrier startBarrier;
     private final CyclicBarrier endBarrier;
@@ -39,7 +39,7 @@ public class Worker extends Thread {
 
     public void run() {
 
-        while (true) {
+        //while (true) {
             awaitStart();
 
             readMyBoids();
@@ -49,14 +49,17 @@ public class Worker extends Thread {
             writeMyBoids();
 
             signalEnd();
-        }
+        //}
     }
 
     private void awaitReadToThenWrite() {
         try {
+            log("aspetto gli altri prima di scrivere");
             this.readToWriteBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
+        }finally {
+            log("han finito di leggere");
         }
     }
 
@@ -73,17 +76,27 @@ public class Worker extends Thread {
 
     private void signalEnd() {
         try {
+            log("ho finito aspetto gli altri");
             this.endBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
+        }finally {
+            log("tutti hanno finito");
         }
     }
 
     private void awaitStart() {
         try {
+            log("aspetto il main");
             this.startBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
+        }finally {
+            log("il main mi ha svegliato");
         }
+    }
+
+    private synchronized void log(String msg){
+        System.out.println("[Thread " + this.index + "] " + msg);
     }
 }
