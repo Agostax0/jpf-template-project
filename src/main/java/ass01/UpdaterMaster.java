@@ -2,21 +2,23 @@ package ass01;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 public class UpdaterMaster {
 
     private final int availableProcessors = Runtime.getRuntime().availableProcessors();
 
     private final List<Worker> workers = new ArrayList<>();
-    private final MyCyclicBarrier startBarrier;
-    private final MyCyclicBarrier endBarrier;
+    private final CyclicBarrier startBarrier;
+    private final CyclicBarrier endBarrier;
 
     public UpdaterMaster() {
 
-        this.startBarrier = new MyCyclicBarrier(availableProcessors + 1, "Start Barrier");
-        this.endBarrier = new MyCyclicBarrier(availableProcessors + 1);
+        this.startBarrier = new CyclicBarrier(availableProcessors + 1);
+        this.endBarrier = new CyclicBarrier(availableProcessors + 1);
 
-        var readToWriteBarrier = new MyCyclicBarrier(availableProcessors);
+        var readToWriteBarrier = new CyclicBarrier(availableProcessors);
 
         for (int index = 0; index < availableProcessors; index++) {
             Worker worker = new Worker(index, this.startBarrier, this.endBarrier, readToWriteBarrier);
@@ -29,13 +31,13 @@ public class UpdaterMaster {
         this.workers.forEach(it -> it.setModel(model));
         try {
             this.startBarrier.await(); //quando il main esegue questo await gli altri thread partono
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
 
         try {
             this.endBarrier.await(); //quando gli altri thread finiscono libero il main
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
     }

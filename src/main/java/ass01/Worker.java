@@ -2,6 +2,8 @@ package ass01;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 public class Worker extends Thread {
 
@@ -10,12 +12,12 @@ public class Worker extends Thread {
     private BoidsModel model;
     private final int availableProcessors = Runtime.getRuntime().availableProcessors();
     private List<Boid> myBoids = new ArrayList<>();
-    private final MyCyclicBarrier startBarrier;
-    private final MyCyclicBarrier endBarrier;
+    private final CyclicBarrier startBarrier;
+    private final CyclicBarrier endBarrier;
 
-    private final MyCyclicBarrier readToWriteBarrier;
+    private final CyclicBarrier readToWriteBarrier;
 
-    public Worker(final int index, final MyCyclicBarrier startBarrier, final MyCyclicBarrier endBarrier, final MyCyclicBarrier readToWriteBarrier) {
+    public Worker(final int index, final CyclicBarrier startBarrier, final CyclicBarrier endBarrier, final CyclicBarrier readToWriteBarrier) {
         this.index = index;
         this.startBarrier = startBarrier;
         this.endBarrier = endBarrier;
@@ -53,7 +55,7 @@ public class Worker extends Thread {
     private void awaitReadToThenWrite() {
         try {
             this.readToWriteBarrier.await();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
     }
@@ -72,7 +74,7 @@ public class Worker extends Thread {
     private void signalEnd() {
         try {
             this.endBarrier.await();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
     }
@@ -80,7 +82,7 @@ public class Worker extends Thread {
     private void awaitStart() {
         try {
             this.startBarrier.await();
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }
     }
