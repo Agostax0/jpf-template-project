@@ -14,8 +14,4 @@ public class BoidsSimulator {
     public void runSimulation() {
         updaterMaster.update(model);
     }
-
-    private synchronized void log(String msg){
-
-    }
 }

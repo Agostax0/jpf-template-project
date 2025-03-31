@@ -1,8 +1,5 @@
 package ass01;
 
-import ass01.BoidsModel;
-import ass01.MyCyclicBarrier;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,9 +26,7 @@ public class UpdaterMaster {
     }
 
     public void update(BoidsModel model) {
-        log("li aggiorno");
         this.workers.forEach(it -> it.setModel(model));
-        log("segnalo di partire ai worker [" + this.startBarrier.getQueuePosition() + "]");
         try {
             this.startBarrier.await(); //quando il main esegue questo await gli altri thread partono
         } catch (InterruptedException e) {
@@ -39,14 +34,9 @@ public class UpdaterMaster {
         }
 
         try {
-            log("aspetto i worker " + this.endBarrier.getQueuePosition());
             this.endBarrier.await(); //quando gli altri thread finiscono libero il main
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private synchronized void log(String msg) {
-        //System.out.println("[Thread: main ] " + msg);
     }
 }

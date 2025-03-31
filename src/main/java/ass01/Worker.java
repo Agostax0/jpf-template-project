@@ -52,7 +52,6 @@ public class Worker extends Thread {
 
     private void awaitReadToThenWrite() {
         try {
-            log("aspetto che finiscano le letture [" + this.readToWriteBarrier.getQueuePosition() + "]");
             this.readToWriteBarrier.await();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -72,7 +71,6 @@ public class Worker extends Thread {
 
     private void signalEnd() {
         try {
-            log("ho finito [" + this.endBarrier.getQueuePosition() + "]");
             this.endBarrier.await();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -81,14 +79,9 @@ public class Worker extends Thread {
 
     private void awaitStart() {
         try {
-            log("aspetto di partire in coda con [" + this.startBarrier.getQueuePosition() + "]");
             this.startBarrier.await();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private synchronized void log(String msg) {
-        //System.out.println("[Thread: " + index + " ] " +msg);
     }
 }
