@@ -12,8 +12,8 @@ public class BoidsSimulator {
     }
 
     public void runSimulation() {
-        //while(true){
+        while(true){
             updaterMaster.update(model);
-        //}
+        }
     }
 }

@@ -3,7 +3,6 @@ package ass01;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 
 public class Worker extends Thread {
 
@@ -30,16 +29,14 @@ public class Worker extends Thread {
 
         myBoids.clear();
 
-        for(int i= 0; i < model.getBoids().size(); i++){
-            if(i % availableProcessors == index){
-                myBoids.add(model.getBoids().get(i));
-            }
-        }
+        myBoids.addAll(model.getBoids());
+
+        log("#BOIDS " + myBoids.size());
     }
 
     public void run() {
 
-        //while (true) {
+        while (true) {
             awaitStart();
 
             readMyBoids();
@@ -49,50 +46,50 @@ public class Worker extends Thread {
             writeMyBoids();
 
             signalEnd();
-        //}
+        }
     }
 
     private void awaitReadToThenWrite() {
         try {
-            log("aspetto gli altri prima di scrivere");
+            log("#READ_WAIT " + readToWriteBarrier.getQueuePosition());
             this.readToWriteBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }finally {
-            log("han finito di leggere");
+            log("#READ_DONE " + readToWriteBarrier.getQueuePosition());
         }
     }
 
     private void writeMyBoids() {
         for(var boid: myBoids) {
-            boid.updateVelocity(model);
-            boid.updatePos(model);
+            //boid.updateVelocity(model);
+            //boid.updatePos(model);
         }
     }
 
     private void readMyBoids() {
-        for(var boid: myBoids) boid.readNearbyBoids(this.model);
+        for(var boid: myBoids){/*boid.readNearbyBoids(this.model);*/}
     }
 
     private void signalEnd() {
         try {
-            log("ho finito aspetto gli altri");
+            log("#END_WAIT " + endBarrier.getQueuePosition());
             this.endBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }finally {
-            log("tutti hanno finito");
+            log("#END_DONE " + endBarrier.getQueuePosition());
         }
     }
 
     private void awaitStart() {
         try {
-            log("aspetto il main");
+            log("#START_WAIT " + startBarrier.getQueuePosition());
             this.startBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             throw new RuntimeException(e);
         }finally {
-            log("il main mi ha svegliato");
+            log("#START_DONE " + startBarrier.getQueuePosition());
         }
     }
 
