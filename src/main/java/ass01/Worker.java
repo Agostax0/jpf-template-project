@@ -9,7 +9,7 @@ public class Worker extends Thread {
     private final int index;
 
     private BoidsModel model;
-    private final int availableProcessors = 4;
+    private final int availableProcessors = 2;
     private List<Boid> myBoids = new ArrayList<>();
     private final MyCyclicBarrier startBarrier;
     private final MyCyclicBarrier endBarrier;
@@ -29,7 +29,11 @@ public class Worker extends Thread {
 
         myBoids.clear();
 
-        myBoids.addAll(model.getBoids());
+        for(int i= 0; i < model.getBoids().size(); i++){
+            if(i % availableProcessors == index){
+                myBoids.add(model.getBoids().get(i));
+            }
+        }
 
         log("#BOIDS " + myBoids.size());
     }

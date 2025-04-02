@@ -6,7 +6,7 @@ import java.util.concurrent.BrokenBarrierException;
 
 public class UpdaterMaster {
 
-    private final int availableProcessors = Runtime.getRuntime().availableProcessors();
+    private final int availableProcessors = 2;//Runtime.getRuntime().availableProcessors();
 
     private final List<Worker> workers = new ArrayList<>();
     private final MyCyclicBarrier startBarrier;
